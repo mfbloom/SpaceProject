@@ -28,7 +28,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    self.imageView =[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Jupiter.jpg"]];
+    //self.imageView (this is a variable for the image to be displayed - imageView is the variable name we set for the UI image in the storyboard
+    
+    self.imageView =[[UIImageView alloc]initWithImage:self.spaceObject.spaceImage];
     
     self.scrollView.contentSize = self.imageView.frame.size;
     
