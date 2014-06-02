@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface MBAppDelegate : UIResponder <UIApplicationDelegate>
-
 @property (strong, nonatomic) UIWindow *window;
 
 @end
