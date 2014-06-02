@@ -9,6 +9,7 @@
 #import "MBOuterSpaceViewController.h"
 #import "AstronomicalData.h"
 #import "MBSpaceObject.h"
+#import "MBSpaceImageViewController.h"
 
 @interface MBOuterSpaceViewController ()
 
@@ -68,6 +69,32 @@
 //    NSNumber *myNumber = [NSNumber numberWithInt:5];
 }
 
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    //sender is th object that trigger the segue
+    
+    //NSLog(@"%@",sender);
+    
+    if([sender isKindOfClass:[UITableViewCell class]])//compares if classes match
+   {
+if([segue.destinationViewController isKindOfClass:[MBSpaceImageViewController class]])//check to make sure it is the correct view controller
+       {
+           //this is a proxy to pass data to the viewController - this occurs after the view is already loaded, so you need to save the data that will be passed.
+           MBSpaceImageViewController *nextViewController = segue.destinationViewController;
+           
+           //figure out where you are on table view
+           NSIndexPath *path = [self.tableView indexPathForCell:sender];
+          // NSLog(@"%@",path);
+           
+           //select the value the user selected
+           MBSpaceObject *selectedObject = [self.planets objectAtIndex:path.row];
+           // or... MBSpaceObject *selectedObject = [self.planets[path.row]] - same thing as above
+           
+           nextViewController.spaceObject = selectedObject;
+       }
+    }
+    
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
