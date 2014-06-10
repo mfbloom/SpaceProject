@@ -36,9 +36,15 @@
     
     [self.scrollView addSubview:self.imageView];
     
+  
+    
     self.scrollView.delegate = self; //register me (this view controller) to listen to evetnts from scroll view.
     self.scrollView.maximumZoomScale = 2.0;
     self.scrollView.minimumZoomScale = 0.5;
+
+    // self.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    //self.imageView.clipsToBounds = YES;
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -49,7 +55,6 @@
 
 -(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView //which view do we scroll in on
 {
-    
     
     return self.imageView;
 }
