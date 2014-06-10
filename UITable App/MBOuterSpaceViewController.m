@@ -10,6 +10,8 @@
 #import "AstronomicalData.h"
 #import "MBSpaceObject.h"
 #import "MBSpaceImageViewController.h"
+#import "MBSpaceDataViewController.h"
+#import "MBAddSpaceObjectViewController.h"
 
 @interface MBOuterSpaceViewController ()
 
@@ -38,35 +40,17 @@
     
     self.planets = [[NSMutableArray alloc]init];
     
+    self.view.backgroundColor = [UIColor blackColor];
+    
     for (NSMutableDictionary *planetData in [AstronomicalData allKnownPlanets])
     {
         NSString *imageName = [NSString stringWithFormat:@"%@.jpg",planetData [PLANET_NAME]];
+        
         MBSpaceObject *planet = [[MBSpaceObject alloc] initWithData:planetData andImage:[UIImage imageNamed:imageName]];
+        
         [self.planets addObject:planet];
     }
-    
-//    NSString *planet1 = @"Mercury";
-//    NSString *planet2 = @"Earth";
-//    NSString *planet3 = @"Venus";
-//    NSString *planet4 = @"Mars";
-//    NSString *planet5 = @"Jupiter";
-//    NSString *planet6 = @"Saturn";
-//    NSString *planet7 = @"Uranus";
-//    NSString *planet8 = @"Neptune";
-//    
-//    //self.planets = [[NSMutableArray alloc]initWithObjects:planet1,planet2,planet3,planet4,planet5,planet6,planet7,planet8, nil];
 
-//    
-//    NSMutableDictionary *myDictionary = [[NSMutableDictionary alloc] init];
-//    NSString *firstColor = @"Red";
-//    
-//    [myDictionary setObject:firstColor forKey:@"Firetruck Color"];
-//    [myDictionary setObject:@"Blue" forKey:@"Ocean Color"];
-//    [myDictionary setObject:@"Yellow" forKey:@"Star Color"];
-//
-//    NSString *blueString = [myDictionary objectForKey:@"Ocean Color"];
-    
-//    NSNumber *myNumber = [NSNumber numberWithInt:5];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -77,7 +61,7 @@
     
     if([sender isKindOfClass:[UITableViewCell class]])//compares if classes match
    {
-if([segue.destinationViewController isKindOfClass:[MBSpaceImageViewController class]])//check to make sure it is the correct view controller
+       if([segue.destinationViewController isKindOfClass:[MBSpaceImageViewController class]])//check to make sure it is the correct view controller
        {
            //this is a proxy to pass data to the viewController - this occurs after the view is already loaded, so you need to save the data that will be passed.
            MBSpaceImageViewController *nextViewController = segue.destinationViewController;
@@ -92,13 +76,45 @@ if([segue.destinationViewController isKindOfClass:[MBSpaceImageViewController cl
            
            nextViewController.spaceObject = selectedObject;
        }
+       
     }
     
+    if([sender isKindOfClass:[NSIndexPath class]])
+    {
+        if ([segue.destinationViewController isKindOfClass:[MBSpaceDataViewController class]])
+        {
+            MBSpaceDataViewController *targetViewController = segue.destinationViewController;
+            NSIndexPath *path = sender;
+            MBSpaceObject *selectedObject = self.planets[path.row];
+            targetViewController.spaceObject = selectedObject;
+        }
+    }
+    
+    if([segue.destinationViewController isKindOfClass:[MBAddSpaceObjectViewController class]])
+    {
+        MBAddSpaceObjectViewController *addSpaceObjectVC = segue.destinationViewController;
+        addSpaceObjectVC.delegate = self;
+    }
 }
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma  mark - MBAddSpaceObject
+
+-(void)didCancel
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
+
+}
+-(void)addSpaceObject
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
+
 }
 
 #pragma mark - Table view data source
@@ -107,7 +123,13 @@ if([segue.destinationViewController isKindOfClass:[MBSpaceImageViewController cl
 {
 #warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 1;
+    
+    if([self.addedSpaceObjects count])
+    {
+        return 2;
+    }
+    else return 1;
+
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -115,7 +137,14 @@ if([segue.destinationViewController isKindOfClass:[MBSpaceImageViewController cl
 #warning Incomplete method implementation.
     // Return the number of rows in the section.
   
-    return [self.planets count];
+    if(section ==1)
+    {
+        return [self.addedSpaceObjects count];
+    }
+    else
+    {
+        return [self.planets count];
+    }
 }
 
 
@@ -124,33 +153,16 @@ if([segue.destinationViewController isKindOfClass:[MBSpaceImageViewController cl
     static NSString *CellIdentifier =@"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    // Configure the cell...
-    
-   // AstronomicalData *myData = [[AstronomicalData alloc] init];
-    
- 
-//    
-//    cell.textLabel.text =[self.planets objectAtIndex: indexPath.row];
-//    
-//
-//    
-//    if (indexPath.section ==0){
-//        
-//        cell.backgroundColor = [UIColor redColor];
-//        
-//    }
-//    
-//    else {
-//        
-//        cell.backgroundColor = [UIColor yellowColor];
-//        
-//    }
-//    return cell;
-    
+    if(indexPath.section ==1)
+    {
+        //use new space object
+    }
+    else{
     MBSpaceObject *planet = [self.planets objectAtIndex:indexPath.row];
     cell.textLabel.text = planet.name;
     cell.detailTextLabel.text = planet.nickname;
     cell.imageView.image = planet.spaceImage;
+    }
     cell.backgroundColor = [UIColor clearColor];
     
     cell.textLabel.textColor = [UIColor whiteColor];
@@ -188,14 +200,20 @@ if([segue.destinationViewController isKindOfClass:[MBSpaceImageViewController cl
 }
 */
 
-/*
+
 // Override to support conditional rearranging of the table view.
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the item to be re-orderable.
     return YES;
 }
-*/
+
+#pragma  mark UItableViewDelegate
+
+-(void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
+{
+    [self performSegueWithIdentifier:@"pushToSpaceData" sender:indexPath];
+}
 
 /*
 #pragma mark - Navigation
