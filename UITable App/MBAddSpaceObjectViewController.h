@@ -12,7 +12,7 @@
 @protocol MBAddSpaceObjectViewControllerDelegate <NSObject>
 
 @required
--(void)addSpaceObject;
+-(void)addSpaceObject:(MBSpaceObject *)spaceObject;
 -(void)didCancel;
 
 @end
