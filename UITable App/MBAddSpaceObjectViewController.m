@@ -49,7 +49,8 @@
 
 - (IBAction)addButton:(UIButton *)sender {
     
-    [self.delegate addSpaceObject];
+    MBSpaceObject *newSpaceObject = [self returnNewSpaceObject];
+    [self.delegate addSpaceObject:(newSpaceObject)];
 }
 
 -(MBSpaceObject *)returnNewSpaceObject
