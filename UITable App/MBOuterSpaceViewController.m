@@ -110,12 +110,21 @@
     
 
 }
--(void)addSpaceObject
+
+-(void)addSpaceObject:(MBSpaceObject *)spaceObject
 {
+    //check to see if the array exists - only creates it once if does not exist
+    if (!self.addedSpaceObjects)
+    {
+        self.addedSpaceObjects = [[NSMutableArray alloc]init];
+        
+    }
+    [self.addedSpaceObjects addObject:spaceObject];
     [self dismissViewControllerAnimated:YES completion:nil];
     
-
+    [self.tableView reloadData];
 }
+
 
 #pragma mark - Table view data source
 
@@ -156,6 +165,9 @@
     if(indexPath.section ==1)
     {
         //use new space object
+        MBSpaceObject *planet = [self.addedSpaceObjects objectAtIndex:indexPath.row];
+        cell.textLabel.text = planet.name;
+        cell.detailTextLabel.text = planet.nickname;
     }
     else{
     MBSpaceObject *planet = [self.planets objectAtIndex:indexPath.row];
